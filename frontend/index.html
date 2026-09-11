@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Py SIH Weather - Plan for What Matters</title>
+  <meta name="description" content="AI-Powered Personal Weather Decision Assistant for Smart India Hackathon. Plan for Health, Fitness, Beach, Travel, Commute, and Family." />
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body>
+
+  <!-- Mobile Phone Mockup Shell -->
+  <div class="mobile-device-shell">
+    
+    <!-- Top Status Bar & Notch -->
+    <div class="mobile-status-bar">
+      <span id="phoneClock">09:41</span>
+      <div class="notch-pill">
+        <div class="notch-camera"></div>
+      </div>
+      <div class="status-icons">
+        <span>5G</span>
+        <span>📶</span>
+        <span>🔋 98%</span>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="appToast" class="toast-message">Switched Location</div>
+
+    <!-- Main Scrollable Screen Body -->
+    <main class="screen-scroll-container">
+      
+      <!-- Top Persistent App Header with Location Selector -->
+      <header class="app-header">
+        <div class="location-chip" onclick="LocationModal.open()" title="Change Location">
+          <span class="loc-pin">📍</span>
+          <span class="loc-name">Bengaluru, India</span>
+          <span class="loc-chevron">▼</span>
+        </div>
+        <button class="header-action-btn" onclick="LocationModal.useGps()" title="Use Current GPS">
+          <span>🎯</span>
+        </button>
+      </header>
+
+      <!-- VIEW 1: HOME (Standard SIH App Screen) -->
+      <section id="view-home" class="app-view active">
+        <div id="homeWeatherMain">
+          <!-- Dynamic Home Weather Card & Spotlight Banner rendered via JS -->
+          <div class="skeleton-box" style="height:200px;margin-bottom:15px;"></div>
+          <div class="skeleton-box" style="height:120px;margin-bottom:15px;"></div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: SUB-HOMEPAGE: "PLAN FOR WHAT MATTERS" -->
+      <section id="view-plan" class="app-view">
+        <div class="plan-header-block">
+          <div class="nav-back-row">
+            <button class="btn-icon-back" onclick="AppNav.backToHome()" title="Back to Home">➔</button>
+            <span class="tag-badge">Personalized Assistant</span>
+          </div>
+          <h1 class="plan-title">Plan for What Matters</h1>
+          <p class="plan-subtitle">Weather insights designed around your day.</p>
+        </div>
+
+        <!-- Live Current Weather Indicator -->
+        <div id="planLiveIndicator" class="live-weather-indicator-pill">
+          <div class="indicator-left">
+            <span class="indicator-weather-icon">🌤️</span>
+            <div>
+              <div class="indicator-temp">25°C</div>
+              <div class="indicator-desc">Partly Cloudy • Clean Air</div>
+            </div>
+          </div>
+          <div class="indicator-right">
+            <div>💨 12 km/h</div>
+            <div>🫁 AQI 45</div>
+          </div>
+        </div>
+
+        <!-- 2-Column Mobile Category Grid -->
+        <div class="section-heading">
+          <span>Select Your Purpose</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);">6 Categories</span>
+        </div>
+        <div id="categoryGrid" class="category-grid">
+          <!-- Rendered dynamically by PlanDashboard.renderCategoryGrid() -->
+        </div>
+      </section>
+
+      <!-- VIEW 3: DEDICATED CATEGORY DASHBOARD -->
+      <section id="view-category-detail" class="app-view">
+        <div id="categoryDetailContent">
+          <!-- Category Dashboard content injected dynamically -->
+        </div>
+      </section>
+
+      <!-- VIEW 4: EXTENDED FORECAST -->
+      <section id="view-forecast" class="app-view">
+        <div class="plan-header-block">
+          <div class="nav-back-row">
+            <button class="btn-icon-back" onclick="AppNav.backToHome()">➔</button>
+            <span class="tag-badge">Multi-Day</span>
+          </div>
+          <h2 class="plan-title">Forecast Overview</h2>
+        </div>
+        <div id="forecastContent"></div>
+      </section>
+
+      <!-- VIEW 5: RADAR & MAPS -->
+      <section id="view-maps" class="app-view">
+        <div class="plan-header-block">
+          <div class="nav-back-row">
+            <button class="btn-icon-back" onclick="AppNav.backToHome()">➔</button>
+            <span class="tag-badge">Satellite</span>
+          </div>
+          <h2 class="plan-title">Weather Radar</h2>
+          <p class="plan-subtitle">Live precipitation radar & wind vectors</p>
+        </div>
+        <div class="metric-card" style="padding:24px;text-align:center;">
+          <div style="font-size:3rem;margin-bottom:10px;">🗺️</div>
+          <div style="font-weight:700;">Live Doppler & Cloud Density</div>
+          <p style="font-size:0.8rem;color:var(--text-secondary);margin-top:6px;">High-resolution Indian Meteorological Department (IMD) / Open-Meteo satellite composite radar feed active.</p>
+        </div>
+      </section>
+
+      <!-- VIEW 6: SEVERE ALERTS -->
+      <section id="view-alerts" class="app-view">
+        <div class="plan-header-block">
+          <div class="nav-back-row">
+            <button class="btn-icon-back" onclick="AppNav.backToHome()">➔</button>
+            <span class="tag-badge">Safety Alerts</span>
+          </div>
+          <h2 class="plan-title">Regional Alerts</h2>
+          <p class="plan-subtitle">Automated hazardous weather monitoring</p>
+        </div>
+        <div class="recommendation-card" style="border-left-color:var(--success);background:#f0fdf4;">
+          <div class="rec-title-row">
+            <span>🛡️</span>
+            <span>No Severe Weather Warnings Active</span>
+          </div>
+          <div class="rec-body-text">Barometric pressures and wind shear gradients are stable across your monitored district.</div>
+        </div>
+      </section>
+
+      <!-- VIEW 7: MORE & SETTINGS -->
+      <section id="view-more" class="app-view">
+        <div class="plan-header-block">
+          <div class="nav-back-row">
+            <button class="btn-icon-back" onclick="AppNav.backToHome()">➔</button>
+            <span class="tag-badge">SIH 2026</span>
+          </div>
+          <h2 class="plan-title">App Information</h2>
+        </div>
+        <div class="metric-card" style="padding:16px;">
+          <div style="font-weight:800;font-size:1.05rem;">AI Weather Decision Assistant</div>
+          <div style="font-size:0.82rem;color:var(--text-secondary);margin-top:4px;">Smart India Hackathon (SIH 2026) Submission</div>
+          <div style="margin-top:12px;font-size:0.8rem;border-top:1px solid #e2e8f0;padding-top:10px;">
+            <div>⚡ <strong>Architecture:</strong> Python FastAPI + Open-Meteo Services</div>
+            <div style="margin-top:4px;">🎯 <strong>Philosophy:</strong> "Don't just know the weather. Know what to do."</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav-bar">
+      <button class="nav-item active" data-tab="home" onclick="AppNav.switchTab('home')">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </button>
+
+      <button class="nav-item" data-tab="forecast" onclick="AppNav.switchTab('forecast')">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Forecast</span>
+      </button>
+
+      <!-- Prominent Center Highlight Button for Plan for What Matters -->
+      <button class="nav-item nav-plan-highlight" data-tab="plan" onclick="AppNav.switchTab('plan')" title="Plan for What Matters">
+        <div class="nav-icon-circle">🎯</div>
+        <span class="nav-label" style="font-weight:700;color:var(--primary);">Plan</span>
+      </button>
+
+      <button class="nav-item" data-tab="maps" onclick="AppNav.switchTab('maps')">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Maps</span>
+      </button>
+
+      <button class="nav-item" data-tab="alerts" onclick="AppNav.switchTab('alerts')">
+        <span class="nav-icon">🔔</span>
+        <span class="nav-label">Alerts</span>
+      </button>
+
+      <button class="nav-item" data-tab="more" onclick="AppNav.switchTab('more')">
+        <span class="nav-icon">⋯</span>
+        <span class="nav-label">More</span>
+      </button>
+    </nav>
+
+    <!-- Interactive Location Search Modal -->
+    <div id="locationModal" class="modal-backdrop" onclick="if(event.target === this) LocationModal.close()">
+      <div class="modal-sheet">
+        <div class="modal-header-row">
+          <span class="modal-title">Select Location</span>
+          <button class="modal-close-btn" onclick="LocationModal.close()">✕</button>
+        </div>
+
+        <div class="search-input-box">
+          <span class="search-icon-inside">🔍</span>
+          <input 
+            type="text" 
+            id="locationSearchInput" 
+            placeholder="Search city (e.g. Mumbai, Delhi, London)..." 
+            oninput="LocationModal.handleSearchInput(event)" 
+          />
+        </div>
+
+        <button class="btn-use-gps" onclick="LocationModal.useGps()">
+          <span>📍</span>
+          <span>Use Current GPS Location</span>
+        </button>
+
+        <div id="locationSearchResults" class="search-results-list">
+          <!-- Search results dynamically rendered here -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/plan_dashboard.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
